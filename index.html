@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Thumba to Space 🚀</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body{font-family: sans-serif; background:#0b0e1a; color:white; margin:0; text-align:center;}
+.hero{background: linear-gradient(#000428,#004e92); padding:60px 20px;}
+h1{font-size:3em; margin:0;}
+.card{background:#1a1e2f; margin:20px; padding:20px; border-radius:15px; border:1px solid #333;}
+.timer{font-size:2em; color:#ffcc00; font-weight:bold;}
+a{color:#00d4ff; text-decoration:none;}
+</style>
+</head>
+<body>
+<div class="hero">
+<h1>🚀 Thumba to Space</h1>
+<p>From a fishing village in Thiruvananthapuram to the Moon</p>
+<p><i>Built from Kilimanoor, Kerala for NASA Stardance</i></p>
+</div>
+
+<div class="card">
+<h2>📍 1963 - Thumba</h2>
+<p>India's space dream started in Thumba, near magnetic equator. First sounding rocket launched from a church building! Dr. Vikram Sarabhai chose this place.</p>
+</div>
+
+<div class="card">
+<h2>🌙 Chandrayaan-3 - We are on the Moon!</h2>
+<p>23 Aug 2023 - India became 1st to land near Moon's South Pole.</p>
+</div>
+
+<div class="card">
+<h2>⏳ Gaganyaan Countdown</h2>
+<div class="timer" id="timer">Loading...</div>
+<p>Launch: 15 Sep 2026 from Sriharikota</p>
+</div>
+
+<div class="card">
+<h2>🛰️ Where is ISS Now? (Live NASA)</h2>
+<p id="iss">Fetching ISS location...</p>
+</div>
+
+<div class="card">
+<h2>IN - ISRO x NASA</h2>
+<p>NISAR satellite, Artemis Accords - Together to space!</p>
+</div>
+
+<script>
+function updateTimer(){
+ const launch = new Date("2026-09-15T00:00:00").getTime();
+ const now = new Date().getTime();
+ const d = launch - now;
+ const days = Math.floor(d/(1000*60*60*24));
+ document.getElementById("timer").innerText = days + " days to go!";
+}
+setInterval(updateTimer,1000);
+fetch("https://api.wheretheiss.at/v1/satellites/25544")
+.then(r=>r.json()).then(data=>{
+ document.getElementById("iss").innerText = "Lat: "+data.latitude.toFixed(2)+", Lon: "+data.longitude.toFixed(2)+" | Speed: "+data.velocity.toFixed(0)+" km/h";
+}).catch(()=>{
+ document.getElementById("iss").innerText = "ISS is orbiting at 28,000 km/h - 420km above us!";
+});
+</script>
+
+<p style="padding:30px; opacity:0.6;">Built with ❤️ from Kerala | Mireya | Hack Club Stardance 2026</p>
+</body>
+</html>
