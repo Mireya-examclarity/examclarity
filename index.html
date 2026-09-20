@@ -1,218 +1,601 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>ExamClarity 🚀</title>
+<!DOCTYPE html> <html lang="en"> <head>
+<meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1"
-    >
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
 
-    <link
-        rel="stylesheet"
-        href="{{ url_for('static', filename='style.css') }}"
-    >
-</head>
+<title>StudySpace</title>
 
-<body>
+<link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='style.css') }}"
+>
 
-<div class="hero">
-    <h1>🚀 ExamClarity</h1>
-    <p>
-        Turn long lectures into 3-point clarity.
-        Built for Kerala students.
-    </p>
+</head> <body> <!-- ========================= NAVIGATION ========================= --> <nav class="navbar">
+<div class="nav-container">
+
+    <a href="/" class="logo">
+
+        <div class="logo-icon">
+            S
+        </div>
+
+        <span>
+            StudySpace
+        </span>
+
+    </a>
+
+
+    <div class="nav-right">
+
+        <span>
+            Study Assistant
+        </span>
+
+    </div>
+
 </div>
 
-<div class="card">
+</nav> <main class="container">
+<!-- =========================
+     HERO
+========================= -->
 
-    <h3>🌌 NASA Picture of the Day</h3>
+<section class="hero">
 
-    {% if apod %}
+    <div class="hero-badge">
+        NASA Study Challenge
+    </div>
+
+
+    <h1>
+        Study smarter.
+        <span>Learn better.</span>
+    </h1>
+
+
+    <p>
+        Turn your notes into summaries, key concepts,
+        definitions and practice questions.
+    </p>
+
+</section>
+
+
+
+<!-- =========================
+     NASA APOD
+========================= -->
+
+{% if apod %}
+
+<section class="apod-card">
+
+    <div class="apod-image">
 
         <img
             src="{{ apod.url }}"
-            class="apod-image"
             alt="{{ apod.title }}"
         >
 
-        <p>
-            <b>{{ apod.title }}</b>
-        </p>
-
-        <p class="description">
-            {{ apod.explanation[:300] }}...
-        </p>
-
-    {% else %}
-
-        <p>NASA image unavailable.</p>
-
-    {% endif %}
-
-</div>
+    </div>
 
 
-<div class="card">
+    <div class="apod-content">
 
-    <form method="POST">
-
-        <h3>📚 Paste Your Notes</h3>
-
-        <textarea
-            name="notes"
-            placeholder="Paste your chapter, transcript..."
-        >{{ notes_text }}</textarea>
-
-        <br><br>
-
-        <label>Difficulty:</label>
-
-        <select name="difficulty">
-
-            <option
-                value="Easy"
-                {% if difficulty == "Easy" %}selected{% endif %}
-            >
-                Easy
-            </option>
-
-            <option
-                value="Medium"
-                {% if difficulty == "Medium" %}selected{% endif %}
-            >
-                Medium
-            </option>
-
-            <option
-                value="Hard"
-                {% if difficulty == "Hard" %}selected{% endif %}
-            >
-                Hard
-            </option>
-
-        </select>
+        <div class="section-label">
+            NASA • Astronomy Picture of the Day
+        </div>
 
 
-        <label>Questions:</label>
-
-        <select name="num">
-
-            <option value="3"
-                {% if num == 3 %}selected{% endif %}>
-                3
-            </option>
-
-            <option value="5"
-                {% if num == 5 %}selected{% endif %}>
-                5
-            </option>
-
-            <option value="10"
-                {% if num == 10 %}selected{% endif %}>
-                10
-            </option>
-
-        </select>
-
-        <br><br>
-
-        <button type="submit">
-            ✨ Analyze My Notes
-        </button>
-
-    </form>
-
-</div>
+        <h2>
+            {{ apod.title }}
+        </h2>
 
 
-{% if result %}
-
-<div class="card">
-
-    <h3>📊 Dashboard</h3>
-
-    Words:
-    {{ result.analysis.word_count }}
-
-    |
-
-    Sentences:
-    {{ result.analysis.sentence_count }}
-
-    |
-
-    Concepts:
-    {{ result.analysis.important_words|length }}
-
-</div>
-
-
-<div class="card">
-
-    <h3>🧠 3-Point Summary</h3>
-
-    {% for p in result.summary %}
-
-        <p>• {{ p }}</p>
-
-    {% endfor %}
-
-</div>
-
-
-<div class="card">
-
-    <h3>🔥 Important Concepts</h3>
-
-    {% for c in result.analysis.important_words %}
-
-        <span class="concept">
-            {{ c }}
-        </span>
-
-    {% endfor %}
-
-</div>
-
-
-<div class="card">
-
-    <h3>📝 Quiz Questions</h3>
-
-    {% for q in result.questions %}
+        {% if apod.explanation %}
 
         <p>
-            <b>
-                {{ loop.index }}.
-                {{ q.question }}
-            </b>
-
-            <br>
-
-            <small>
-                Key: {{ q.topic }}
-            </small>
+            {{ apod.explanation }}
         </p>
 
-    {% endfor %}
+        {% endif %}
 
-</div>
+    </div>
 
-
-<div class="card">
-
-    <h3>📖 Key Definitions</h3>
-
-    {% for d in result.definitions %}
-
-        <p>• {{ d }}</p>
-
-    {% endfor %}
-
-</div>
+</section>
 
 {% endif %}
 
-</body>
-</html>
+
+
+<!-- =========================
+     MAIN WORKSPACE
+========================= -->
+
+<section class="workspace">
+
+
+    <!-- NOTES -->
+
+    <div class="main-card">
+
+        <div class="card-header">
+
+            <div>
+
+                <h2>
+                    Your Notes
+                </h2>
+
+                <p>
+                    Paste your study material below.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <form method="POST">
+
+
+            <textarea
+                name="notes"
+                placeholder="Paste your notes here..."
+                required
+            >{{ notes_text }}</textarea>
+
+
+
+            <!-- CONTROLS -->
+
+            <div class="controls">
+
+
+                <div class="form-group">
+
+                    <label for="difficulty">
+                        Difficulty
+                    </label>
+
+
+                    <select
+                        id="difficulty"
+                        name="difficulty"
+                    >
+
+                        <option
+                            value="Easy"
+                            {% if difficulty == "Easy" %}
+                            selected
+                            {% endif %}
+                        >
+                            Easy
+                        </option>
+
+
+                        <option
+                            value="Medium"
+                            {% if difficulty == "Medium" %}
+                            selected
+                            {% endif %}
+                        >
+                            Medium
+                        </option>
+
+
+                        <option
+                            value="Hard"
+                            {% if difficulty == "Hard" %}
+                            selected
+                            {% endif %}
+                        >
+                            Hard
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+
+                <div class="form-group">
+
+                    <label for="num">
+                        Questions
+                    </label>
+
+
+                    <input
+                        type="number"
+                        id="num"
+                        name="num"
+                        min="1"
+                        max="20"
+                        value="{{ num }}"
+                    >
+
+                </div>
+
+
+            </div>
+
+
+
+            <button
+                type="submit"
+                class="analyze-button"
+            >
+
+                Analyze Notes
+
+            </button>
+
+
+        </form>
+
+    </div>
+
+
+
+    <!-- FEATURES -->
+
+    <aside class="side-card">
+
+        <h2>
+            What you can do
+        </h2>
+
+
+        <div class="feature">
+
+            <div class="feature-icon">
+                ✓
+            </div>
+
+            <div>
+
+                <h3>
+                    Summarize
+                </h3>
+
+                <p>
+                    Find the most important parts of your notes.
+                </p>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="feature">
+
+            <div class="feature-icon">
+                #
+            </div>
+
+            <div>
+
+                <h3>
+                    Key Concepts
+                </h3>
+
+                <p>
+                    Discover frequently used important terms.
+                </p>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="feature">
+
+            <div class="feature-icon">
+                ?
+            </div>
+
+            <div>
+
+                <h3>
+                    Practice
+                </h3>
+
+                <p>
+                    Generate questions at different difficulty levels.
+                </p>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="feature">
+
+            <div class="feature-icon">
+                i
+            </div>
+
+            <div>
+
+                <h3>
+                    Definitions
+                </h3>
+
+                <p>
+                    Find definition-style information in your notes.
+                </p>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+</section>
+
+
+
+<!-- =========================
+     RESULTS
+========================= -->
+
+{% if result %}
+
+
+<section class="results">
+
+
+    <div class="results-heading">
+
+        <div>
+
+            <h2>
+                Your Results
+            </h2>
+
+            <p>
+                Here's what we found in your notes.
+            </p>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- STATISTICS -->
+
+    <div class="stats">
+
+
+        <div class="stat-card">
+
+            <span class="stat-number">
+                {{ result.analysis.word_count }}
+            </span>
+
+            <span class="stat-label">
+                Words
+            </span>
+
+        </div>
+
+
+
+        <div class="stat-card">
+
+            <span class="stat-number">
+                {{ result.analysis.sentence_count }}
+            </span>
+
+            <span class="stat-label">
+                Sentences
+            </span>
+
+        </div>
+
+
+
+        <div class="stat-card">
+
+            <span class="stat-number">
+                {{ result.questions|length }}
+            </span>
+
+            <span class="stat-label">
+                Questions
+            </span>
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- RESULT GRID -->
+
+    <div class="results-grid">
+
+
+        <!-- SUMMARY -->
+
+        <div class="result-card">
+
+            <h3>
+                Summary
+            </h3>
+
+
+            {% if result.summary %}
+
+            <ul>
+
+                {% for sentence in result.summary %}
+
+                <li>
+                    {{ sentence }}
+                </li>
+
+                {% endfor %}
+
+            </ul>
+
+            {% else %}
+
+            <p class="empty">
+                No summary available.
+            </p>
+
+            {% endif %}
+
+        </div>
+
+
+
+        <!-- IMPORTANT WORDS -->
+
+        <div class="result-card">
+
+            <h3>
+                Important Concepts
+            </h3>
+
+
+            {% if result.analysis.important_words %}
+
+            <div class="keywords">
+
+                {% for word in result.analysis.important_words %}
+
+                <span class="keyword">
+                    {{ word }}
+                </span>
+
+                {% endfor %}
+
+            </div>
+
+            {% else %}
+
+            <p class="empty">
+                No important concepts found.
+            </p>
+
+            {% endif %}
+
+        </div>
+
+
+
+        <!-- QUESTIONS -->
+
+        <div class="result-card">
+
+            <h3>
+                Practice Questions
+            </h3>
+
+
+            {% if result.questions %}
+
+            <ol class="questions">
+
+                {% for item in result.questions %}
+
+                <li>
+
+                    <div class="question">
+                        {{ item.question }}
+                    </div>
+
+                    <div class="topic">
+                        Topic: {{ item.topic }}
+                    </div>
+
+                </li>
+
+                {% endfor %}
+
+            </ol>
+
+            {% else %}
+
+            <p class="empty">
+                No questions generated.
+            </p>
+
+            {% endif %}
+
+        </div>
+
+
+
+        <!-- DEFINITIONS -->
+
+        <div class="result-card">
+
+            <h3>
+                Definitions
+            </h3>
+
+
+            {% if result.definitions %}
+
+            <ul>
+
+                {% for definition in result.definitions %}
+
+                <li>
+                    {{ definition }}
+                </li>
+
+                {% endfor %}
+
+            </ul>
+
+            {% else %}
+
+            <p class="empty">
+                No definition-style sentences were detected.
+            </p>
+
+            {% endif %}
+
+        </div>
+
+
+    </div>
+
+</section>
+
+{% endif %}
+
+</main> <!-- ========================= FOOTER ========================= --> <footer>
+<div class="footer-container">
+
+    <span>
+        StudySpace
+    </span>
+
+    <span>
+        Built with Flask
+    </span>
+
+</div>
+
+</footer> </body> </html>
+
+
+       
+
+       
+       
