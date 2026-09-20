@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ExamClarity 🚀</title>
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+</head>
+
+<body>
+
+<div class="hero">
+    <h1>🚀 ExamClarity</h1>
+    <p>
+        Turn long lectures into 3-point clarity.
+        Built for Kerala students.
+    </p>
+</div>
+
+<div class="card">
+
+    <h3>🌌 NASA Picture of the Day</h3>
+
+    {% if apod %}
+
+        <img
+            src="{{ apod.url }}"
+            class="apod-image"
+            alt="{{ apod.title }}"
+        >
+
+        <p>
+            <b>{{ apod.title }}</b>
+        </p>
+
+        <p class="description">
+            {{ apod.explanation[:300] }}...
+        </p>
+
+    {% else %}
+
+        <p>NASA image unavailable.</p>
+
+    {% endif %}
+
+</div>
+
+
+<div class="card">
+
+    <form method="POST">
+
+        <h3>📚 Paste Your Notes</h3>
+
+        <textarea
+            name="notes"
+            placeholder="Paste your chapter, transcript..."
+        >{{ notes_text }}</textarea>
+
+        <br><br>
+
+        <label>Difficulty:</label>
+
+        <select name="difficulty">
+
+            <option
+                value="Easy"
+                {% if difficulty == "Easy" %}selected{% endif %}
+            >
+                Easy
+            </option>
+
+            <option
+                value="Medium"
+                {% if difficulty == "Medium" %}selected{% endif %}
+            >
+                Medium
+            </option>
+
+            <option
+                value="Hard"
+                {% if difficulty == "Hard" %}selected{% endif %}
+            >
+                Hard
+            </option>
+
+        </select>
+
+
+        <label>Questions:</label>
+
+        <select name="num">
+
+            <option value="3"
+                {% if num == 3 %}selected{% endif %}>
+                3
+            </option>
+
+            <option value="5"
+                {% if num == 5 %}selected{% endif %}>
+                5
+            </option>
+
+            <option value="10"
+                {% if num == 10 %}selected{% endif %}>
+                10
+            </option>
+
+        </select>
+
+        <br><br>
+
+        <button type="submit">
+            ✨ Analyze My Notes
+        </button>
+
+    </form>
+
+</div>
+
+
+{% if result %}
+
+<div class="card">
+
+    <h3>📊 Dashboard</h3>
+
+    Words:
+    {{ result.analysis.word_count }}
+
+    |
+
+    Sentences:
+    {{ result.analysis.sentence_count }}
+
+    |
+
+    Concepts:
+    {{ result.analysis.important_words|length }}
+
+</div>
+
+
+<div class="card">
+
+    <h3>🧠 3-Point Summary</h3>
+
+    {% for p in result.summary %}
+
+        <p>• {{ p }}</p>
+
+    {% endfor %}
+
+</div>
+
+
+<div class="card">
+
+    <h3>🔥 Important Concepts</h3>
+
+    {% for c in result.analysis.important_words %}
+
+        <span class="concept">
+            {{ c }}
+        </span>
+
+    {% endfor %}
+
+</div>
+
+
+<div class="card">
+
+    <h3>📝 Quiz Questions</h3>
+
+    {% for q in result.questions %}
+
+        <p>
+            <b>
+                {{ loop.index }}.
+                {{ q.question }}
+            </b>
+
+            <br>
+
+            <small>
+                Key: {{ q.topic }}
+            </small>
+        </p>
+
+    {% endfor %}
+
+</div>
+
+
+<div class="card">
+
+    <h3>📖 Key Definitions</h3>
+
+    {% for d in result.definitions %}
+
+        <p>• {{ d }}</p>
+
+    {% endfor %}
+
+</div>
+
+{% endif %}
+
+</body>
+</html>
