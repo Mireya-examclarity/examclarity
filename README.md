@@ -7,17 +7,16 @@ Students get overwhelmed about what to study and how to make notes and they rely
 But these are not useful when you don't have much time in your hands.
 This website is easier for students to use and make notes and can test themselves.Enhancing their studying.
 
-#FEATURES
+It turns messy study notes into summaries, keywords, definitions, and practice questions. Also gives study score and  random challenges to make revision interactive.
 
-   Timer
-   
-  Sticky notes
+### Features
+- ⏰ Pomodoro Timer - 25 min focus
+- 🗒️ Sticky Notes - saves imp points
+- 🎲 Study Challenge - random task to keep you going
+- 🚀 NASA APOD - real space pic daily for motivation
+- 📌 3-point summary , keywords and quiz
 
- Study Challenge 
+### Limitations
+Uses basic text processing, so summaries/questions aren't always perfect. Works best with clear, complete sentences.
 
- NASA APOD 
-
- Limitations
- 
-This project uses basic text processing  so the generated summaries and questions won't always be perfect.
-It works best when the notes are reasonably clear and contain complete sentences.
+Made  for students 🎀
