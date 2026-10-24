@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ExamClarity</title>
+
+<style>
+body{background:#F6F3FF;font-family:Arial;margin:0;padding:16px}
+.box{background:#fff;border:3px solid #000;border-radius:16px;padding:14px;margin-bottom:12px}
+button{width:100%;padding:10px;border:3px solid #000;border-radius:10px;font-weight:900;margin-top:6px;cursor:pointer}
+.peach{background:#FFC8A2}.lilac{background:#E8E0FF}.yellow{background:#FFF0B3}
+.q{background:#F6F3FF;border:2px solid #000;border-radius:8px;padding:6px;margin-top:6px;font-size:13px}
+</style>
+</head>
+<body>
+
+<div style="max-width:800px;margin:0 auto;text-align:center;background:#fff;border:3px solid #000;border-radius:18px;padding:16px;margin-bottom:12px">
+<h1>ExamClarity 🔮</h1><p>Made in Kerala 🎀</p>
+</div>
+
+<div style="max-width:800px;margin:0 auto;display:flex;gap:12px;flex-wrap:wrap">
+<div style="flex:1;min-width:300px">
+
+<div class="box">
+<b>📋 Notes</b>
+<textarea id="notes" rows="5" style="width:100%;border:2px solid #000;border-radius:8px;padding:8px" placeholder="Paste notes..."></textarea>
+<select id="diff" style="width:100%;border:2px solid #000;border-radius:8px;padding:8px;margin-top:6px"><option>Easy</option><option selected>Medium</option><option>Hard</option></select>
+<button onclick="makeClear()" style="background:#7C5CFF;color:#fff">✨ Make it clear</button>
+</div>
+
+<div id="out" style="display:none" class="box">
+<p id="score"></p>
+<div id="sum"></div><div id="keys"></div><div id="qs"></div>
+<p><b>🎲 Challenge:</b> <span id="chal"></span></p>
+</div>
+
+<div class="box yellow">
+<b>🗒️ Sticky</b>
+<textarea id="sticky" rows="3" style="width:100%;border:2px solid #000;border-radius:8px;padding:8px" placeholder="Must remember..."></textarea>
+<button onclick="saveSticky()" style="background:#000;color:#fff">📌 Save</button>
+<button onclick="clearSticky()" style="background:#fff">Clear</button>
+<p id="saved"></p>
+</div>
+
+</div>
+
+<div style="flex:0.7;min-width:250px">
+
+<div class="box peach">
+<b>⏰ Pomodoro - TEST THIS</b>
+<div id="timer" style="font-size:32px;font-weight:900;text-align:center">25:00</div>
+<button onclick="startTimer()" style="background:#fff">▶️ Start / Pause</button>
+<button onclick="resetTimer()" style="background:#000;color:#fff">Reset</button>
+</div>
+
+<div class="box lilac">
+<b>🚀 NASA Real Pic</b>
+<img id="apod" src="https://apod.nasa.gov/apod/image/2308/M31_HubbleSpitzer_960.jpg" style="width:100%;border:2px solid #000;border-radius:10px;margin-top:6px">
+<p id="apodT" style="font-size:12px">Andromeda Galaxy</p>
+</div>
+
+<div class="box">
+<b>📏 Count</b><p id="count">0 words</p>
+</div>
+
+</div>
+</div>
+
+<script>
+
+// NO DOMContentLoaded
+
+var timeLeft = 1500;
+var timerInterval = null;
+var running = false;
+
+function updateTimer(){
+  var m = Math.floor(timeLeft/60);
+  var s = timeLeft%60;
+  document.getElementById('timer').innerHTML = (m<10?'0'+m:m) + ':' + (s<10?'0'+s:s);
+}
+
+function startTimer(){
+  if(running){
+    clearInterval(timerInterval);
+    running = false;
+    return;
+  }
+  running = true;
+  timerInterval = setInterval(function(){
+    timeLeft--;
+    updateTimer();
+    if(timeLeft<=0){
+      clearInterval(timerInterval);
+      alert('Done! Break time 🌿');
+      timeLeft = 1500;
+      running = false;
+      updateTimer();
+    }
+  },1000);
+}
+
+function resetTimer(){
+  clearInterval(timerInterval);
+  timeLeft = 1500;
+  running = false;
+  updateTimer();
+}
+
+function saveSticky(){
+  var v = document.getElementById('sticky').value;
+  localStorage.setItem('exam_sticky', v);
+  document.getElementById('saved').innerText = 'Saved! ✨';
+  setTimeout(function(){document.getElementById('saved').innerText='';},1500);
+}
+function clearSticky(){
+  localStorage.removeItem('exam_sticky');
+  document.getElementById('sticky').value='';
+}
+
+// Sticky note
+
+var saved = localStorage.getItem('exam_sticky');
+if(saved){ document.getElementById('sticky').value = saved; }
+
+// Live count
+
+document.getElementById('notes').addEventListener('input', function(){
+  var t = this.value.trim();
+  var c = t==''?0:t.split(/\s+/).length;
+  document.getElementById('count').innerText = c + ' words';
+});
+
+function makeClear(){
+  var text = document.getElementById('notes').value;
+  if(!text.trim()){ alert('Paste notes'); return; }
+  document.getElementById('out').style.display='block';
+  var w = text.split(/\s+/).length;
+  document.getElementById('score').innerText = 'Score '+Math.min(100,Math.floor(w/4))+' pts | '+w+' words';
+  var sens = text.split(/[.!?]+/).filter(function(s){return s.trim().length>10}).slice(0,3);
+  document.getElementById('sum').innerHTML = '<b>📌 Summary</b>' + sens.map(function(s){return '<div class="q">'+s.trim()+'</div>'}).join('');
+  var words = text.toLowerCase().match(/\b[a-z]{5,}\b/g) || [];
+  var uniq = [...new Set(words)].slice(0,6);
+  document.getElementById('keys').innerHTML = '<b>🔑 Keywords</b><br>' + uniq.map(function(k){return '<span style="background:#E8E0FF;border:2px solid #000;border-radius:10px;padding:2px 6px;margin:2px;display:inline-block;font-size:11px">'+k+'</span>'}).join('');
+  var num = 5;
+  var qs = []; for(var i=0;i<num;i++) qs.push('What is '+uniq[i%uniq.length]+'?');
+  document.getElementById('qs').innerHTML = '<b>❓ Questions</b>' + qs.map(function(q){return '<div class="q">'+q+'</div>'}).join('');
+  var ch = ['Explain to a 10yo','Write 5 keywords from memory','2 min brain dump'];
+  document.getElementById('chal').innerText = ch[Math.floor(Math.random()*ch.length)];
+}
+
+
+
+// NASA - FIXED WITH FALLBACK
+
+var apodImg = document.getElementById('apod');
+var apodTitle = document.getElementById('apodT');
+
+// Fallback images that ALWAYS show (real NASA pics)
+
+var fallbacks = [
+  {url: "https://apod.nasa.gov/apod/image/2308/M31_HubbleSpitzer_960.jpg", title: "Andromeda Galaxy - Real NASA"},
+  {url: "https://apod.nasa.gov/apod/image/2401/orion_nasa_960.jpg", title: "Orion Nebula - Real NASA"},
+  {url: "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=600", title: "Galaxy - NASA Style"}
+];
+
+function setFallback(){
+  var pick = fallbacks[Math.floor(Math.random()*fallbacks.length)];
+  apodImg.src = pick.url;
+  apodTitle.innerText = pick.title + " (Real pic, not logo)";
+}
+
+// Try NASA API, if fails show fallback
+
+try {
+  fetch("https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY")
+    .then(function(r){return r.json()})
+    .then(function(d){
+      if(d.media_type==='image' && d.url){
+        apodImg.src=d.url;
+        apodTitle.innerText=d.title + " - NASA APOD Today";
+      } else {
+        setFallback();
+      }
+    })
+    .catch(function(){ setFallback(); });
+} catch(e){ setFallback(); }
+
+// If image fails to load (broken link), show fallback
+
+apodImg.onerror = function(){ setFallback(); };
+
+updateTimer();
+</script>
+</body></html>
