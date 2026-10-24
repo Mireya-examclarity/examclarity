@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ExamClarity 🔮</title>
+
+<style>
+body{background:#F6F3FF;color:#2b2b33;font-family:Arial,sans-serif;margin:0;padding:16px}
+.box{background:#fff;border:3px solid #2b2b33;border-radius:18px;padding:14px;margin-bottom:12px;box-shadow:5px 5px 0 #2b2b33}
+.peach{background:#FFC8A2} .lilac{background:#E8E0FF} .yellow{background:#FFF0B3}
+textarea,select,input,button{width:100%;padding:10px;border:2.5px solid #2b2b33;border-radius:10px;margin-top:6px}
+button{font-weight:900;cursor:pointer;box-shadow:3px 3px 0 #2b2b33}
+button:active{transform:translate(2px,2px);box-shadow:0 0 0}
+.btn{background:#7C5CFF;color:#fff}
+.q{background:#F6F3FF;border:2px solid #2b2b33;border-radius:10px;padding:8px;margin-top:6px}
+.layout{max-width:900px;margin:0 auto;display:flex;gap:12px}
+.l{flex:1.3} .r{flex:0.7}
+@media(max-width:700px){.layout{flex-direction:column}}
+</style>
+</head>
+<body>
+
+<div style="max-width:900px;margin:0 auto 14px;background:#fff;border:3px solid #2b2b33;border-radius:20px;padding:18px;box-shadow:7px 7px 0 #2b2b33;text-align:center">
+<h1>ExamClarity 🔮</h1>
+<p>Made in Kerala 🎀</p>
+<img src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=200&fit=crop" style="width:100%;max-width:350px;border:3px solid #2b2b33;border-radius:12px">
+</div>
+
+<div class="layout">
+<div class="l">
+<div class="box">
+<b>📋 Paste notes</b>
+<textarea id="notes" rows="5" placeholder="Paste here..."></textarea>
+<div style="display:flex;gap:6px">
+<select id="diff"><option>Easy</option><option selected>Medium</option><option>Hard</option></select>
+<input id="num" type="number" value="5">
+</div>
+<button class="btn" onclick="makeClear()">✨ Make it clear</button>
+</div>
+
+<div id="out" style="display:none" class="box">
+<p id="score"></p>
+<div id="sum"></div><div id="keys"></div><div id="qs"></div>
+<p><b>🎲 Challenge:</b> <span id="chal"></span></p>
+</div>
+
+<div class="box yellow">
+<b>🗒️ Sticky Notes</b>
+<textarea id="sticky" rows="3" placeholder="Must remember..."></textarea>
+<div style="display:flex;gap:6px">
+<button id="saveBtn" style="background:#2b2b33;color:#fff">📌 Save</button>
+<button id="clearBtn" style="background:#fff">Clear</button>
+</div>
+<p id="saved" style="font-size:11px"></p>
+</div>
+</div>
+
+<div class="r">
+<div class="box peach">
+<b>⏰ Pomodoro Timer</b>
+<div id="timer" style="font-size:32px;font-weight:900;text-align:center;margin:10px 0">25:00</div>
+<div style="display:flex;gap:6px">
+<button id="startBtn" style="background:#fff">▶️ Start</button>
+<button id="resetBtn" style="background:#2b2b33;color:#fff">Reset</button>
+</div>
+<p style="font-size:11px;color:#555">Click Start to begin, again to pause</p>
+</div>
+
+<div class="box lilac">
+<b>🚀 NASA Pic (Real, not logo)</b>
+<img id="apod" src="https://apod.nasa.gov/apod/image/2308/M31_HubbleSpitzer_960.jpg" style="width:100%;border:2.5px solid #2b2b33;border-radius:10px;margin-top:6px">
+<p id="apodT" style="font-size:12px">Andromeda Galaxy</p>
+</div>
+
+<div class="box">
+<b>📏 Live Count</b>
+<p id="count" style="font-size:18px;font-weight:900">0 words</p>
+</div>
+</div>
+</div>
+
+<script>
+
+// MAKE SURE DOM IS READY
+
+document.addEventListener('DOMContentLoaded', function(){
+
+// LIVE COUNT
+
+const notesEl = document.getElementById('notes');
+const countEl = document.getElementById('count');
+notesEl.addEventListener('input', ()=>{
+  let c = notesEl.value.trim().split(/\s+/).filter(x=>x).length;
+  if(notesEl.value.trim()==='') c=0;
+  countEl.innerText = c + ' words';
+});
+
+// STICKY NOTES 
+
+const sKey='exam_sticky';
+const stickyEl=document.getElementById('sticky');
+stickyEl.value=localStorage.getItem(sKey)||'';
+document.getElementById('saveBtn').addEventListener('click', ()=>{
+  localStorage.setItem(sKey, stickyEl.value);
+  document.getElementById('saved').innerText='Saved! ✨';
+  setTimeout(()=>document.getElementById('saved').innerText='',1500);
+});
+document.getElementById('clearBtn').addEventListener('click', ()=>{
+  localStorage.removeItem(sKey);
+  stickyEl.value='';
+});
+
+// POMODORO - I FIXED CLICK
+
+let timeLeft=1500;
+let interval=null;
+let isRunning=false;
+const timerEl=document.getElementById('timer');
+
+function updateDisplay(){
+  let m=Math.floor(timeLeft/60);
+  let s=timeLeft%60;
+  timerEl.innerText=(m<10?'0'+m:m)+':'+(s<10?'0'+s:s);
+}
+updateDisplay();
+
+document.getElementById('startBtn').addEventListener('click', function(){
+  if(isRunning){
+    clearInterval(interval);
+    isRunning=false;
+    this.innerText='▶️ Resume';
+    return;
+  }
+  isRunning=true;
+  this.innerText='⏸️ Pause';
+  interval=setInterval(()=>{
+    timeLeft--;
+    updateDisplay();
+    if(timeLeft<=0){
+      clearInterval(interval);
+      isRunning=false;
+      alert('25 min done! Take 5 min break 🌿');
+      timeLeft=1500;
+      updateDisplay();
+      document.getElementById('startBtn').innerText='▶️ Start';
+    }
+  },1000);
+});
+
+document.getElementById('resetBtn').addEventListener('click', ()=>{
+  clearInterval(interval);
+  timeLeft=1500;
+  isRunning=false;
+  updateDisplay();
+  document.getElementById('startBtn').innerText='▶️ Start';
+});
+
+// NASA
+fetch("https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY").then(r=>r.json()).then(d=>{
+  if(d.media_type==='image'){
+    document.getElementById('apod').src=d.url;
+    document.getElementById('apodT').innerText=d.title;
+  }
+}).catch(()=>{});
+
+}); // end DOMContentLoaded
+
+// SUMMARY LOGIC
+function makeClear(){
+  let text=document.getElementById('notes').value;
+  if(!text.trim()){alert('Paste notes first');return}
+  document.getElementById('out').style.display='block';
+  let w=(text.match(/\b[a-z]+\b/gi)||[]).length;
+  document.getElementById('score').innerText='Score '+Math.min(100,Math.floor(w/4))+' pts | '+w+' words';
+  let sens=text.split(/[.!?]+/).filter(s=>s.trim().length>10).slice(0,3);
+  document.getElementById('sum').innerHTML='<b>📌 Summary</b>'+sens.map(s=>'<div class="q">'+s.trim()+'</div>').join('');
+  let words=text.toLowerCase().match(/\b[a-z]{5,}\b/g)||[];
+  let uniq=[...new Set(words)].slice(0,8);
+  document.getElementById('keys').innerHTML='<b>🔑 Keywords</b><div style="margin-top:4px">'+uniq.map(k=>'<span style="background:#E8E0FF;border:2px solid #2b2b33;border-radius:12px;padding:2px 6px;margin:2px;display:inline-block;font-size:11px">'+k+'</span>').join('')+'</div>';
+  let diff=document.getElementById('diff').value;
+  let num=parseInt(document.getElementById('num').value)||5;
+  let qs=[]; for(let i=0;i<num;i++) qs.push('What is '+uniq[i%uniq.length]+'? ('+diff+')');
+  document.getElementById('qs').innerHTML='<b>❓ Questions</b>'+qs.map(q=>'<div class="q">'+q+'</div>').join('');
+  let ch=['Explain to a 10yo','Write 5 keywords from memory','2 min brain dump'];
+  document.getElementById('chal').innerText=ch[Math.floor(Math.random()*ch.length)];
+}
+
+
+</script>
+</body></html>
