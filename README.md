@@ -9,19 +9,13 @@ This website is easier for students to use and make notes and can test themselve
 
 #FEATURES
 
-Notes Analyzer >>>It counts words and sentences and finds important terms.
+   Timer
+   
+  Sticky notes
 
- Automatic Summary >>> This will extract the most relevant sentences from notes.
+ Study Challenge 
 
- Question Generator >>>  It creates Easy, Medium, or Hard practice questions.
-
- Definition Finder >>>  This identifies sentences that appear to define concepts.
-
- Study Score >>> It gives a simple score based on the amount and structure of the notes.
-
- Study Challenge >>>This gives students a random revision activity.
-
- NASA APOD >>> It adds a daily space image as a fun visual element.
+ NASA APOD 
 
  Limitations
  
